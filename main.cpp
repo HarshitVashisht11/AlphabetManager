@@ -1,4 +1,5 @@
-#include<bits/stdc++.h>
+#include <iostream>
+#include <string>
 using namespace std;
 
 struct Node {
@@ -13,13 +14,13 @@ void insert_alphabet(Node*& head, int node_number, char name) {
     newNode->name = name;
     newNode->next_node = nullptr;
 
-    if (!head || node_number < head->node_number) {
+    if (!head || name < head->name) {
         newNode->next_node = head;
         head = newNode;
     }
     else {
         Node* current = head;
-        while (current->next_node && node_number >= current->next_node->node_number) {
+        while (current->next_node && name >= current->next_node->name) {
             current = current->next_node;
         }
         newNode->next_node = current->next_node;
@@ -45,19 +46,22 @@ void delete_alphabet(Node*& head, char name) {
     }
 }
 
-Node* search_alphabet(Node* head, char name) {
+bool search_alphabet(Node* head, char name) {
     Node* current = head;
     while (current && current->name != name) {
         current = current->next_node;
     }
-    return current;
+    return current != nullptr;
 }
 
 void update_info(Node* head, char old_name, char new_name, int new_node_number) {
-    Node* nodeToModify = search_alphabet(head, old_name);
-    if (nodeToModify) {
-        nodeToModify->name = new_name;
-        nodeToModify->node_number = new_node_number;
+    Node* current = head;
+    while (current && current->name != old_name) {
+        current = current->next_node;
+    }
+    if (current) {
+        current->name = new_name;
+        current->node_number = new_node_number;
     }
 }
 
@@ -70,17 +74,6 @@ void display_name(Node* head) {
     }
     cout << "Name: " << name << endl;
 }
-
-void delete_list(Node*& head) {
-    Node* current = head;
-    while (current) {
-        Node* next = current->next_node;
-        delete current;
-        current = next;
-    }
-    head = nullptr;
-}
-
 int main() {
     Node* head = nullptr;
     char choice;
@@ -118,11 +111,7 @@ int main() {
         case '3':
             cout << "Enter the alphabet to search: ";
             cin >> name;
-            Node* foundNode = search_alphabet(head, name);
-            if (foundNode)
-                cout << "Character '" << name << "' found in Node number: " << foundNode->node_number << endl;
-            else
-                cout << "Character '" << name << "' not found in the list." << endl;
+            cout << (search_alphabet(head, name) ? "Found" : "Not Found") << endl;
             break;
 
         case '4':
@@ -137,11 +126,6 @@ int main() {
 
         case '5':
             display_name(head);
-            break;
-
-        case '6':
-            delete_list(head);
-            loop = false;
             break;
 
         default:
